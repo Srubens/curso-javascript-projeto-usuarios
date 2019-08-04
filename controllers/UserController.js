@@ -58,7 +58,12 @@ class UserController {
 				reject(e);
 			}
 
-			fileReader.readAsDataURL(file);
+			//CASO O USARIO NÃO ENVIE FOTO
+			if(file){
+				fileReader.readAsDataURL(file);
+			}else{
+				resolve('dist/img/default-50x50.gif');
+			}
 
 		});
 
@@ -74,6 +79,8 @@ class UserController {
 				if (field.checked) {
 					user[field.name] = field.value;
 				}
+			}else if(field.name === "admin"){
+				user[field.name] = field.checked; 
 			} else {
 				user[field.name] = field.value;
 			}
@@ -91,7 +98,7 @@ class UserController {
                     <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
                     <td>${dataUser.name}</td>
                     <td>${dataUser.email}</td>
-                    <td>${dataUser.admin}</td>
+                    <td>${(dataUser.admin) ? 'sim' : 'não'}</td>
                     <td>${dataUser.data}</td>
                     <td>
                       <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
