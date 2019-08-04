@@ -13,9 +13,55 @@ class UserController {
 		
 			event.preventDefault();//CANELA O COMPORTAMENTO PADRAO
 
-			this.addLine(this.getValues());
+			let values = this.getValues();
+
+			this.getPhoto()
+			.then((content)=>{
+
+				values.photo = content;
+
+				this.addLine(values);
+
+			}, (e)=>{
+				console.error(value);
+			});
 
 		});
+	}
+
+	//PEGA AS FOTOS
+	getPhoto(){
+
+		return new Promise((resolve,reject)=>{
+
+			let fileReader = new FileReader();
+
+			let elements = [...this.formEl.elements].filter( item =>{
+
+				if(item.name === 'photo'){
+					return item;
+				} 
+
+			} );
+
+			// console.log(elements[0].files[0]);
+
+			let file = elements[0].files[0];
+
+			//EM CASO DE SUCESSO
+			fileReader.onload = () =>{
+				resolve(fileReader.result);
+			};
+
+			// EM CASO DE ERRO
+			fileReader.onerror = (e) =>{
+				reject(e);
+			}
+
+			fileReader.readAsDataURL(file);
+
+		});
+
 	}
 
 	//PEGAR O VALOR E RETORNAR UM JSON
@@ -34,7 +80,7 @@ class UserController {
 
 		});
 
-		return new User(user.name,user.gender,user.birth,user.country,user.email,user.password,user.photo,user.admin);
+		return new User(user.name,user.gender,user.birth,user.country,user.email,user.password,user.photo,user.admin, user.data);
 
 	}
 
@@ -42,11 +88,11 @@ class UserController {
 		//CRIA UM ELEMENTO TR
 		let tr = document.createElement("tr");
 		tr.innerHTML = `
-                    <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+                    <td><img src="${dataUser.photo}" alt="User Image" class="img-circle img-sm"></td>
                     <td>${dataUser.name}</td>
                     <td>${dataUser.email}</td>
                     <td>${dataUser.admin}</td>
-                    <td>${dataUser.birth}</td>
+                    <td>${dataUser.data}</td>
                     <td>
                       <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
                       <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
