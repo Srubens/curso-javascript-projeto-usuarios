@@ -4,6 +4,16 @@ class UserController {
 		this.formEl = document.getElementById(formId);
 		this.tableEl = document.getElementById(tableId);
 		this.onSubmit();
+		this.onEdit();
+	}
+
+	//EVENTOS DE EDICAO
+	onEditCancel(){
+		//CANCELA A EDICAO 
+		document.querySelector("#box-user-update .btn-cancel").addEventListener("click", e=>{
+			e.preventDefault();
+			this.showPainelCreate();
+		});
 	}
 
 	//SUBMETENDO AO FORMULARIO
@@ -125,14 +135,32 @@ class UserController {
                     <td>${(dataUser.admin) ? 'sim' : 'não'}</td>
                     <td>${Utils.dataFormat(dataUser.register)}</td>
                     <td>
-                      <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
+                      <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
                       <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
                     </td>`;
+
+        tr.querySelector(".btn-edit").addEventListener("click", e =>{
+        	console.log(JSON.parse(tr.dataset.user));
+        	this.showPainelUpdate();
+
+        });
 
         this.tableEl.appendChild(tr);
 
         this.updateCount();
 
+	}
+
+	//MOSTRAR O PAINEL UPDATE
+	showPainelUpdate(){
+		document.querySelector("#box-user-create").style.display = "none";
+    	document.querySelector("#box-user-update").style.display = "block";
+	}
+
+	//MOSTRAR O PAINEL CREATE
+	showPainelCreate(){
+		document.querySelector("#box-user-create").style.display = "block";
+    	document.querySelector("#box-user-update").style.display = "none";
 	}
 
 	//CALCULA A QUANTIDADE DE USUARIOS
