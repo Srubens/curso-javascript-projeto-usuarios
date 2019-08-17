@@ -6,6 +6,7 @@ class UserController {
 		this.tableEl = document.getElementById(tableId);
 		this.onSubmit();
 		this.onEdit();
+		this.selectAll();
 	}
 
 	//EVENTOS DE EDICAO
@@ -57,7 +58,7 @@ class UserController {
 	            <td>${Utils.dataFormat(result._register)}</td>
 	            <td>
 	              <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-	              <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+	              <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
 	            </td>`;
 
 		        this.addEventsTr(tr);
@@ -97,6 +98,8 @@ class UserController {
 			.then((content)=>{
 
 				values.photo = content;
+
+				this.insert(values);
 
 				this.addLine(values);
 
@@ -184,6 +187,48 @@ class UserController {
 
 	}
 
+	getUserStorage(){
+		let users = [];
+
+		// para salvar na session usar = sessionStorage
+		// para salvar no local usar = localStorage
+		
+		if(localStorage.getItem("users")){
+			users = JSON.parse(localStorage.getItem("users"));
+		}
+
+		return users;
+	}
+
+	selectAll(){
+
+		let users = this.getUserStorage();
+
+		users.forEach(dataUser =>{
+			
+			let user = new User();
+
+			user.loadfromJSON(dataUser);
+
+			this.addLine(user);
+		});
+
+	}
+
+	//SESSION STORAGE
+	insert(data){
+
+		let users = this.getUserStorage();
+
+		users.push(data);
+
+		//PERMITE GRAVAR DADOS NA SESSAO
+		// sessionStorage.setItem("users", JSON.stringify(users));
+
+		//PERMITE GRAVAR DADOS NA SESSAO LOCALMENTE
+		localStorage.setItem("users", JSON.stringify(users));
+	}
+
 	addLine(dataUser){
 		//CRIA UM ELEMENTO TR
 		let tr = document.createElement("tr");
@@ -198,7 +243,7 @@ class UserController {
                     <td>${Utils.dataFormat(dataUser.register)}</td>
                     <td>
                       <button type="button" class="btn btn-primary btn-edit btn-xs btn-flat">Editar</button>
-                      <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                      <button type="button" class="btn btn-danger btn-delete btn-xs btn-flat">Excluir</button>
                     </td>`;
 
         this.addEventsTr(tr);
@@ -210,6 +255,16 @@ class UserController {
 	}
 
 	addEventsTr(tr){
+
+		tr.querySelector(".btn-delete").addEventListener("click", e =>{
+
+			if(confirm("Deseja realmente excluir?")){
+				tr.remove();
+
+				this.updateCount();
+			}
+
+		});
 
 		// PARTE DA EDICAO
         tr.querySelector(".btn-edit").addEventListener("click", e =>{
