@@ -8,7 +8,7 @@ class UserController {
 	}
 
 	//EVENTOS DE EDICAO
-	onEditCancel(){
+	onEdit(){
 		//CANCELA A EDICAO 
 		document.querySelector("#box-user-update .btn-cancel").addEventListener("click", e=>{
 			e.preventDefault();
@@ -139,11 +139,39 @@ class UserController {
                       <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
                     </td>`;
 
+        // PARTE DA EDICAO
         tr.querySelector(".btn-edit").addEventListener("click", e =>{
-        	console.log(JSON.parse(tr.dataset.user));
+        	let json = JSON.parse(tr.dataset.user);
+        	let form = document.querySelector("#form-user-update");	
+
+        	for(let name in json){
+        		let field = form.querySelector("[name="+ name.replace("_","") +"]");
+
+        		if(field){
+        			if(field.type == 'file') continue;
+        			switch(field.type){
+        				case 'file':
+        					continue;
+        				break;
+        				case 'radio':
+        					field = form.querySelector("[name="+ name.replace("_","") +"][value="+ json[name] +"]");
+        					field.checked = true;
+        				break;
+        				case 'checkbox':
+        					field.checked = json[name];
+        				break;
+        				default:
+	        				field.value = json[name];
+        			}
+        			
+        		}
+        		
+        	}
+
         	this.showPainelUpdate();
 
         });
+        // PARTE DA EDICAO
 
         this.tableEl.appendChild(tr);
 
